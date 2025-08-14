@@ -1,0 +1,23 @@
+/* Minimal, responsive-friendly base styles.
+   Let MUI's CssBaseline control typography and palette. */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img, svg, video, canvas, audio, iframe, embed, object {
+  display: block;
+  max-width: 100%;
+}
+
+/* Avoid global button/link overrides that can fight with MUI */
