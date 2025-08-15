@@ -16,7 +16,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { School as SchoolIcon, Info as InfoIcon } from '@mui/icons-material';
-import { loginUser, clearError } from '../../store/slices/authSlice';
+import { loginUser, clearError, resetSystem } from '../../store/slices/authSlice';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -77,6 +77,13 @@ const Login = () => {
 
     console.log('Attempting login with:', { email: formData.email, password: formData.password ? '[HIDDEN]' : '[EMPTY]' });
     dispatch(loginUser(formData));
+  };
+
+  const handleResetSystem = () => {
+    if (window.confirm('This will clear all data and reset the system. Are you sure?')) {
+      dispatch(resetSystem());
+      toast.info('System reset. Please try logging in again.');
+    }
   };
 
   return (
@@ -178,6 +185,16 @@ const Login = () => {
                     <strong>Error:</strong> {error}
                   </Typography>
                 )}
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={handleResetSystem}
+                    color="warning"
+                  >
+                    Reset System
+                  </Button>
+                </Box>
               </Alert>
             </Collapse>
           </Box>

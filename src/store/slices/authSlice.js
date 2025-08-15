@@ -12,6 +12,19 @@ const isLocalStorageAvailable = () => {
   }
 };
 
+// Clear corrupted localStorage data
+const clearCorruptedData = () => {
+  try {
+    localStorage.removeItem('users');
+    localStorage.removeItem('currentUser');
+    console.log('Cleared corrupted localStorage data');
+    return true;
+  } catch (error) {
+    console.error('Failed to clear corrupted data:', error);
+    return false;
+  }
+};
+
 // Load users from localStorage
 const loadUsersFromStorage = () => {
   if (!isLocalStorageAvailable()) {
@@ -21,10 +34,33 @@ const loadUsersFromStorage = () => {
   
   try {
     const users = localStorage.getItem('users');
-    return users ? JSON.parse(users) : [];
+    console.log('Raw users from localStorage:', users);
+    
+    if (!users) {
+      console.log('No users found in localStorage, returning empty array');
+      return [];
+    }
+    
+    const parsedUsers = JSON.parse(users);
+    console.log('Parsed users:', parsedUsers);
+    
+    // Ensure we always return an array
+    if (!Array.isArray(parsedUsers)) {
+      console.error('Parsed users is not an array:', parsedUsers);
+      // Clear invalid data and return empty array
+      localStorage.removeItem('users');
+      return [];
+    }
+    
+    return parsedUsers;
   } catch (error) {
     console.error('Error loading users from localStorage:', error);
-    // Return empty array if localStorage fails
+    // Clear corrupted data and return empty array
+    try {
+      localStorage.removeItem('users');
+    } catch (clearError) {
+      console.error('Failed to clear corrupted users data:', clearError);
+    }
     return [];
   }
 };
@@ -124,6 +160,13 @@ export const registerUser = createAsyncThunk(
       }
 
       const users = loadUsersFromStorage();
+      
+      // Ensure users is an array
+      if (!Array.isArray(users)) {
+        console.error('Users is not an array:', users);
+        return rejectWithValue('Failed to load existing users. Please refresh the page.');
+      }
+
       const normalized = {
         ...userData,
         name: normalizeName(userData.name),
@@ -174,6 +217,13 @@ export const loginUser = createAsyncThunk(
       }
 
       const users = loadUsersFromStorage();
+      
+      // Ensure users is an array
+      if (!Array.isArray(users)) {
+        console.error('Users is not an array:', users);
+        return rejectWithValue('Failed to load existing users. Please refresh the page.');
+      }
+      
       const email = normalizeEmail(credentials.email);
       const password = normalizePassword(credentials.password);
       
@@ -236,6 +286,27 @@ const authSlice = createSlice({
     clearError: (state) => {
       state.error = null;
     },
+    resetSystem: (state) => {
+      clearCorruptedData();
+      state.currentUser = null;
+      state.isAuthenticated = false;
+      state.error = null;
+      state.users = [];
+      // Recreate test user
+      if (isLocalStorageAvailable()) {
+        const testUser = {
+          id: '1',
+          name: 'Test Admin',
+          email: 'admin@test.com',
+          password: 'password123',
+          role: 'admin',
+          createdAt: new Date().toISOString(),
+        };
+        state.users = [testUser];
+        saveUsersToStorage([testUser]);
+        console.log('Recreated test user after system reset');
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -279,5 +350,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, clearError } = authSlice.actions;
+export const { logout, clearError, resetSystem } = authSlice.actions;
 export default authSlice.reducer;

@@ -20,7 +20,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { School as SchoolIcon, Info as InfoIcon } from '@mui/icons-material';
-import { registerUser, clearError } from '../../store/slices/authSlice';
+import { registerUser, clearError, resetSystem } from '../../store/slices/authSlice';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -121,6 +121,13 @@ const Register = () => {
     const { confirmPassword, ...userData } = formData;
     console.log('Attempting registration with:', { ...userData, password: '[HIDDEN]' });
     dispatch(registerUser(userData));
+  };
+
+  const handleResetSystem = () => {
+    if (window.confirm('This will clear all data and reset the system. Are you sure?')) {
+      dispatch(resetSystem());
+      toast.info('System reset. Please try registering again.');
+    }
   };
 
   return (
@@ -264,6 +271,16 @@ const Register = () => {
                     <strong>Error:</strong> {error}
                   </Typography>
                 )}
+                <Box sx={{ mt: 2 }}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={handleResetSystem}
+                    color="warning"
+                  >
+                    Reset System
+                  </Button>
+                </Box>
               </Alert>
             </Collapse>
           </Box>
