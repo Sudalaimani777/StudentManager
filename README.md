@@ -185,3 +185,68 @@ For support or questions, please open an issue in the repository or contact the 
 ---
 
 **Note**: This application is designed for educational purposes and uses localStorage for data persistence. For production use, consider implementing a proper backend database and authentication system.
+
+# Student Manager - Authentication Troubleshooting
+
+## Overview
+This is a React-based student management system with authentication functionality.
+
+## Authentication Issues & Solutions
+
+### Common Problems:
+
+1. **localStorage Not Available**
+   - **Cause**: Browser privacy settings, incognito mode, or security restrictions
+   - **Solution**: Check browser settings, disable privacy extensions, or use regular browsing mode
+
+2. **Login/Register Fails Silently**
+   - **Cause**: Redux actions failing or localStorage errors
+   - **Solution**: Check browser console for error messages and use the debug info button
+
+3. **Session Not Persisting**
+   - **Cause**: localStorage save failures
+   - **Solution**: Check browser storage permissions and console errors
+
+## Testing the System
+
+### Test User (Auto-created):
+- **Email**: admin@test.com
+- **Password**: password123
+- **Role**: Administrator
+
+### Debug Features:
+- Click the info icon (ℹ️) on login/register forms to see debug information
+- Check browser console for detailed error logs
+- Verify localStorage status in debug panel
+
+## How to Use:
+
+1. **Start the application**: `npm run dev`
+2. **Navigate to**: http://localhost:5173
+3. **Test Login**: Use the test credentials above
+4. **Test Registration**: Create a new account
+5. **Check Debug Info**: Click the info icon for troubleshooting
+
+## Troubleshooting Steps:
+
+1. **Clear Browser Data**: Clear localStorage and cookies
+2. **Check Console**: Look for error messages in browser console
+3. **Verify localStorage**: Use debug panel to check storage status
+4. **Test in Different Browser**: Try Chrome, Firefox, or Edge
+5. **Check Extensions**: Disable ad blockers or privacy extensions
+
+## Technical Details:
+
+- **State Management**: Redux Toolkit
+- **Storage**: Browser localStorage
+- **UI Framework**: Material-UI (MUI)
+- **Routing**: React Router v6
+- **Notifications**: React-Toastify
+
+## Support:
+
+If issues persist:
+1. Check browser console for errors
+2. Verify localStorage is enabled
+3. Try different browser or incognito mode
+4. Check for conflicting browser extensions

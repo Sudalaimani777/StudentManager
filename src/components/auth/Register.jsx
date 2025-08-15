@@ -15,8 +15,11 @@ import {
   Select,
   MenuItem,
   CircularProgress,
+  Alert,
+  Collapse,
+  IconButton,
 } from '@mui/material';
-import { School as SchoolIcon } from '@mui/icons-material';
+import { School as SchoolIcon, Info as InfoIcon } from '@mui/icons-material';
 import { registerUser, clearError } from '../../store/slices/authSlice';
 
 const Register = () => {
@@ -29,6 +32,8 @@ const Register = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showDebug, setShowDebug] = useState(false);
+  const [localStorageStatus, setLocalStorageStatus] = useState('checking');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -51,6 +56,18 @@ const Register = () => {
       dispatch(clearError());
     }
   }, [error, dispatch]);
+
+  useEffect(() => {
+    // Check localStorage availability
+    try {
+      const test = 'test';
+      localStorage.setItem(test, test);
+      localStorage.removeItem(test);
+      setLocalStorageStatus('available');
+    } catch (e) {
+      setLocalStorageStatus('unavailable');
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -102,6 +119,7 @@ const Register = () => {
     }
 
     const { confirmPassword, ...userData } = formData;
+    console.log('Attempting registration with:', { ...userData, password: '[HIDDEN]' });
     dispatch(registerUser(userData));
   };
 
@@ -218,6 +236,36 @@ const Register = () => {
                 {"Already have an account? Sign In"}
               </Link>
             </Box>
+            
+            {/* Debug Section */}
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <IconButton
+                size="small"
+                onClick={() => setShowDebug(!showDebug)}
+                sx={{ color: 'text.secondary' }}
+              >
+                <InfoIcon />
+              </IconButton>
+              <Typography variant="caption" color="text.secondary">
+                Debug Info
+              </Typography>
+            </Box>
+            
+            <Collapse in={showDebug}>
+              <Alert severity="info" sx={{ mt: 2 }}>
+                <Typography variant="body2">
+                  <strong>localStorage Status:</strong> {localStorageStatus}
+                </Typography>
+                <Typography variant="body2">
+                  <strong>Current State:</strong> {loading ? 'Loading' : 'Ready'}
+                </Typography>
+                {error && (
+                  <Typography variant="body2" color="error">
+                    <strong>Error:</strong> {error}
+                  </Typography>
+                )}
+              </Alert>
+            </Collapse>
           </Box>
         </Paper>
       </Box>
